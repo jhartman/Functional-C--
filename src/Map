@@ -1,0 +1,18 @@
+
+#ifndef MAP_
+#define MAP_
+
+template<typename K, typename V, typename MapT>
+class Map {
+	Map<K, V>& operator +(const pair<K, V> elem) {
+		static_cast<MapT*>(this) -> add0(elem);
+	}
+
+	template<typename Fn>
+	void foreach(Fn fn) {
+		static_cast<MapT*>(this) -> foreach0(fn);
+	}
+
+};
+
+#endif /* MAP_ */

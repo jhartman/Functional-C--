@@ -1,0 +1,6 @@
+#ifndef VECTOR_
+#define VECTOR_
+using namespace std;
+
+
+#endif /* VECTOR_ */
