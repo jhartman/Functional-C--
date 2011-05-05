@@ -3,11 +3,7 @@
 #define FUNCTIONS_H_
 
 #include <algorithm>
-
-template<typename T, typename V>
-class Fn {
-	virtual V operator()(const T & from);
-};
+using namespace std;
 
 struct Plus {
 	template<typename T, typename V>
@@ -38,5 +34,29 @@ struct Min {
 	template<typename T>
 	auto operator()(T a, T b) -> T { return min(a, b); };
 };
+
+struct Square {
+	template<typename T>
+	auto operator()(const T &a) -> T { return a * a; };
+};
+
+struct Print {
+	template<typename T>
+	auto operator()(T a) -> void { cout<<a<<endl; };
+};
+
+
+//template<typename T>
+//class Print : public Function1<T, void>{
+//public:
+//	virtual void operator()(const T & elem) { cout<<elem<<endl; }
+//};
+//
+//template<typename T>
+//class Square : public Function1<T, T> {
+//public:
+//	T operator()(const T & elem) { return elem * elem; }
+//};
+
 
 #endif /* FUNCTIONS_H_ */

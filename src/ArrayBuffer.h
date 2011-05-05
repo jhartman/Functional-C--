@@ -22,7 +22,13 @@ private:
 public:
 	ArrayBuffer() {};
 
-	ArrayBuffer(vector<T> a) : array(a) {}
+	ArrayBuffer(int size) {
+		array(size);
+	}
+
+	ArrayBuffer(vector<T> vector): array(vector) {}
+
+	ArrayBuffer(initializer_list<T> list) : array(list) {}
 
 	ArrayBuffer<T> const operator +(const T & elem){
 		array.push_back(elem);
@@ -34,16 +40,26 @@ public:
 		return *this;
 	}
 
-	template<typename Fn>
-	void foreach(Fn fn) {
-		for(unsigned int i = 0; i < array.size(); i++) fn(array[i]);
+	T operator [](int index) const {
+		return array[index];
 	}
 
-	template<typename V>
-	auto map(Fn<T, V> fn) -> ArrayBuffer<V> {
-		vector<V> result(array.size());
-		for(int unsigned i = 0; i < array.size(); i++) result[i] = fn(array[i]);
-		return result;
+	T& operator [](int index) {
+		return array[index];
+	}
+
+	template<typename Fn>
+	void foreach(Fn fn) {
+		for(unsigned int i = 0; i < array.size(); i++)
+			fn(array[i]);
+	}
+
+	template<typename Fn>
+	auto map(Fn fn) -> ArrayBuffer<decltype(fn(declval<T>()))> {
+		vector<decltype(fn(declval<T>()))> result(array.size());
+		for(int unsigned i = 0; i < array.size(); i++)
+			result[i] = fn(array[i]);
+		return ArrayBuffer(result);
 	}
 
 	template<typename B, typename Fn>
@@ -64,7 +80,6 @@ public:
 
 	template<typename Fn>
 	auto flatMap(Fn fn) -> decltype(fn(declval<T>())) {
-
 		// fn maps from T to Iterable[V]
 		// If we have a Iterable[String] and we map them to Iterable[Char], we can have one big Iterable[Char]
 		decltype(fn(declval<T>())) result;
@@ -117,9 +132,6 @@ public:
 //		}
 //		return result;
 //	}
-
-
-//	virtual ~ArrayBuffer();
 };
 
 #endif /* ARRAYBUFFER_H_ */

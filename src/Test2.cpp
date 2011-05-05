@@ -1,23 +1,11 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <assert.h>
+#include <string>
 #include "ArrayBuffer.h"
 #include "CopyOnWriteArrayBuffer.h"
-#include <string>
-
-using namespace std;
-
-class Print {
-	public:
-	template<typename T>
-	void operator()(T elem) { cout<<elem<<endl; }
-};
-
-template<typename T>
-class Square : Fn<T, T> {
-public:
-	virtual T operator()(const T &elem) { return elem * elem; }
-};
+#include "List.h"
 
 struct ToCharArray {
 	ArrayBuffer<char> operator()(string elem) {
@@ -28,23 +16,57 @@ struct ToCharArray {
 	}
 };
 
-vector<int> some_list = {5, 1, 3, 2};
+template<typename T, typename Iterable>
+bool search(Iterable collection, T value) {
+	return collection.contains(value);
+}
 
-//bool testCopyOnWriteArrayBuffer() {
-//	Iterable<int, CopyOnWriteArrayBuffer<int>> iterable = CopyOnWriteArrayBuffer(some_list);
-//	iterable.map(Square()).foreach(Print())
-//}
-
-int main() {
-	vector<int> some_list = {5, 1, 3, 2};
-	ArrayBuffer<int> iterable(some_list);
+void testArrayBuffer() {
+	ArrayBuffer<int> iterable = {5, 1, 3, 2};
+	iterable[0] = 4;
 	iterable += 4;
-	iterable.map(Square<int>()).foreach(Print());
 
-	vector<string> text0 = {"Lorem", "Ipsum", "Delta"};
+	iterable.map(Square()).foreach(Print());
+
+	std::vector<string> text0 = {"Lorem", "Ipsum", "Delta"};
 	ArrayBuffer<string> text(text0);
 
 	auto flattenedText = text.flatMap([](string elem) { return ToCharArray()(elem); } );
 	flattenedText.foreach(Print());
+}
+
+void testCopyOnWriteArrayBuffer() {
+	vector<int> some_list = {5, 1, 3, 2};
+
+	auto iterable = CopyOnWriteArrayBuffer<int>(some_list);
+	auto iterable2 = iterable.updated(0, 2);
+	assert(iterable[0] == 5);
+	assert(iterable2[0] == 2);
+
+	iterable.map(Square()).foreach(Print());
+	auto squared = iterable.map(Square());
+	assert(search(squared, 25) == true);
+
+	assert(!squared.filter([](int x) { return (x == 25); }).isEmpty());
+	assert(!squared.filter([](int x) { return (x == 24); }).isEmpty());
+}
+
+void testList() {
+	auto list = List<int>(1);
+
+	cout<<"Built a list"<<endl;
+
+	auto list2 = list + (2);
+	list2.foreach(Print());
+	std::cout<<"WTF";
+	std::cout<<list2.head()<<endl<<"zomg";
+}
+
+int main() {
+	cout<<"Test started"<<endl;
+//	testArrayBuffer();
+//	testCopyOnWriteArrayBuffer();
+	testList();
+	cout<<"Test finished"<<endl;
 }
 

@@ -2,5 +2,27 @@
 #define VECTOR_
 using namespace std;
 
+template<class T>
+class Vector {
+private:
+	// A Vector is either
+	// 1. A Copy On Write buffer of values
+	// 2. A vector of vectors :)
+	CopyOnWriteArrayBuffer<T> data;
+	Vector<T> links;
+
+	bool isLeaf() {
+		if(links.isEmpty())
+			return true;
+	}
+public:
+	Vector() {};
+
+	Vector(initializer_list<T> list) : data(list);
+
+	bool isEmpty() {
+		return data.isEmpty() && links.isEmpty();
+	}
+
 
 #endif /* VECTOR_ */
