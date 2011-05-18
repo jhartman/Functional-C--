@@ -54,12 +54,17 @@ void testCopyOnWriteArrayBuffer() {
 void testList() {
 	auto list = List<int>(1);
 
-	cout<<"Built a list"<<endl;
+	auto list2 = list + 2;
+	List<int> list3 = {1, 2, 3, 4};
 
-	auto list2 = list + (2);
 	list2.foreach(Print());
-	std::cout<<"WTF";
-	std::cout<<list2.head()<<endl<<"zomg";
+	list3.foreach(Print());
+
+	list3.reverse().foreach(Print());
+
+	list3.map(Square()).foreach(Print());
+
+	cout<<"The size is "<<list3.size()<<endl;
 }
 
 int main() {
