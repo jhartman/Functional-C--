@@ -64,6 +64,8 @@ void testList() {
 
 	list3.map(Square()).foreach(Print());
 
+	assert(list3.filter([](int elem) {return (elem % 2) == 0;}).size() == 2);
+
 	cout<<"The size is "<<list3.size()<<endl;
 }
 

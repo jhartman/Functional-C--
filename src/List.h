@@ -47,6 +47,37 @@ public:
 		return cell -> data;
 	}
 
+	List<T> tail() const {
+		auto null = shared_ptr<Cell<T> >();
+		return List<T>((cell == null) ? cell : cell -> next);
+	}
+
+	int size() const {
+		return foldLeft(0, [](int acc, T elem) { return acc + 1; });
+	}
+
+	bool contains(T elem) const {
+		auto p = cell;
+		auto null = shared_ptr<Cell<T> >();
+		while(p != null) {
+			if((p -> data) == elem)
+				return true;
+			p = p -> next;
+		}
+		return false;
+	}
+
+	List<T> drop(int n) const {
+		auto p = cell;
+		int i = 0;
+		auto null = shared_ptr<Cell<T> >();
+		while(p != null && i < n) {
+			i++;
+			p = p -> next;
+		}
+		return List<T>(p);
+	}
+
 	template<typename Fn>
 	void foreach(Fn fn) const {
 		auto p = cell;
@@ -74,18 +105,39 @@ public:
 		return result;
 	}
 
-	int size() const {
-		return foldLeft(0, [](int acc, T elem) { return acc + 1; });
-	}
-
 	template<typename Fn>
-	auto map(Fn fn) -> List<decltype(fn(declval<T>()))> {
+	auto map(Fn fn) -> const List<decltype(fn(declval<T>()))> {
 		List<decltype(fn(declval<T>()))> result;
 
 		return foldLeft(result,
 				[&fn](const List<decltype(fn(declval<T>()))> & acc, const T & elem) {
 			return acc + fn(elem);
 		}).reverse();
+	}
+
+	template<typename Fn>
+	List<T> filter(Fn fn) const {
+		List<T> result;
+
+		return foldLeft(result,
+				[&fn](const List<T> & acc, const T & elem) {
+			return (fn(elem)) ? (acc + elem) : acc;
+		}).reverse();
+	}
+
+	template<typename V>
+	auto zip(List<V> that) -> const List<pair<T, V> > {
+		auto END1 = shared_ptr<Cell<T> >();
+		auto END2 = shared_ptr<Cell<V> >();
+
+		auto p1 = cell;
+		auto p2 = that -> cell;
+
+		List<pair<T, V> > result;
+		while(p1 != END1 && p2 != END2) {
+			result = result + make_pair(p1 -> data, p2 -> data);
+		}
+		return result.reverse();
 	}
 };
 
